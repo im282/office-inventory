@@ -28,8 +28,15 @@ function Badge({ children, color }) {
 }
 
 export default function App() {
-  const [items, setItems] = useState([]);
-  const [transactions, setTransactions] = useState([]);
+  const [items, setItems] = useState(() => {
+  const saved = localStorage.getItem("office-items");
+  return saved ? JSON.parse(saved) : [];
+});
+
+const [transactions, setTransactions] = useState(() => {
+  const saved = localStorage.getItem("office-transactions");
+  return saved ? JSON.parse(saved) : [];
+});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState("stock"); // stock | log | add
@@ -43,6 +50,15 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [editItem, setEditItem] = useState(null);
   const saveTimeout = useRef(null);
+
+useEffect(() => {
+  localStorage.setItem("office-items", JSON.stringify(items));
+}, [items]);
+
+useEffect(() => {
+  localStorage.setItem("office-transactions", JSON.stringify(transactions));
+}, [transactions]);
+
 
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
